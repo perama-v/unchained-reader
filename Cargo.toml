@@ -8,7 +8,7 @@ description = "For reading Unchained Index files"
 [workspace]
 members = [
     "crates/*",
-    "bin/appearance-finder"
+    "bin/*"
 ]
 
 [dependencies]

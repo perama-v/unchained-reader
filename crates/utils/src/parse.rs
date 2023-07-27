@@ -103,15 +103,15 @@ pub struct UnchainedFile {
     pub(crate) reader: BufReader<File>,
     pub(crate) header: Header,
     pub(crate) body: Body,
-    pub(crate) present: BlockRange,
-    pub(crate) desired: BlockRange,
+    pub present: BlockRange,
+    pub desired: BlockRange,
     pub(crate) contains_unwanted_blocks: bool,
     pub parsed: Vec<AddressData>,
 }
 
 impl UnchainedFile {
     /// Obtains metadata and prepares Unchained Index file for reading.
-    pub fn new(path: PathBuf, desired: BlockRange) -> Result<Self, ParseError> {
+    pub fn from_file(path: PathBuf, desired: BlockRange) -> Result<Self, ParseError> {
         let file = File::open(&path).map_err(|e| ParseError::FileOpener {
             filename: path.to_path_buf(),
             source: e,
@@ -256,7 +256,7 @@ pub struct BlockRange {
 impl BlockRange {
     /// New range of blocks.
     pub fn new(old_block_number: u32, new_block_number: u32) -> Result<Self, ParseError> {
-        if old_block_number >= new_block_number {
+        if old_block_number > new_block_number {
             return Err(ParseError::RangeReversed {
                 old: old_block_number,
                 new: new_block_number,
