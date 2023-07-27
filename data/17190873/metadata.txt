@@ -1,0 +1,11 @@
+Source metadata
+Manifest: QmcTSSv1B1Nuo16jRpiCRAaqYosMowb6t7pzT5A8PHYAVv
+
+Chunk metadata
+{
+    "range": "017190314-017193246",
+    "bloomHash": "QmUqKGKLVpvcEUX17r1BUmBHTzFr5TtsKzMzdQJCgP5Mxd",
+    "bloomSize": 917570,
+    "indexHash": "QmVuHWrW2DtRZcoosk7i13gUfyHMRSzugNvHvhFcq2Wk5Z",
+    "indexSize": 24502148
+},
