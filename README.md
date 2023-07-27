@@ -30,3 +30,9 @@ This returns the manifest CID.
 4. Fetch the chunk
 
 `https://ipfs.unchainedindex.io/ipfs/<chunk_cid>`
+
+5. Rename the chunk to what was in the manifest range field ("range": "017190314-017193246")
+with .bin suffix. This mimics how trueblocks-core handles the files.
+
+QmVu.... -> 017190314-017193246.bin
+
