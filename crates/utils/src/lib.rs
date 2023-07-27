@@ -5,6 +5,6 @@
 pub(crate) mod constants;
 pub mod files;
 pub mod parse;
-pub(crate) mod structure;
+pub mod structure;
 
 pub use parse::*;

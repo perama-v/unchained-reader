@@ -2,7 +2,8 @@
 //! the Unchained Index specification.
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use std::{io::Read, path::PathBuf};
+use serde::{Serialize, Deserialize, Serializer};
+use std::{io::Read, path::PathBuf, fmt::Display};
 
 use super::constants::{ADDR, MAGIC, VAL, VER};
 
@@ -133,7 +134,7 @@ impl AddressEntry {
 }
 
 /// Holds selected transactions for a given address.
-#[derive(Debug, Default, PartialEq, Clone)]
+#[derive(Clone, Debug, Default, Deserialize, PartialEq)]
 pub struct AddressData {
     /// The address that appeared in a transaction.
     pub address: Vec<u8>,
@@ -142,7 +143,7 @@ pub struct AddressData {
 }
 
 /// Content of an entry in the Appearances (transactions) table.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 pub struct TransactionId {
     /// The Ethereum execution block number.
     pub block: u32,

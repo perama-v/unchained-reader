@@ -159,8 +159,13 @@ impl UnchainedFile {
     /// 7. Save to transactions to database, adding to existing AddressData for that address.
     /// 8. Update address byte index for the next entry
     /// 9. Jump back to address table, go to 2.
-    pub fn with_parsed(&mut self, address_leading_char: &str) -> Result<(), ParseError> {
-        let address_starting_bytes = hex::decode(address_leading_char)?;
+    pub fn with_parsed(&mut self, address_leading_char: Option<&str>) -> Result<(), ParseError> {
+        let address_starting_bytes = match address_leading_char {
+            Some(leading) =>
+                Some(hex::decode(leading)?)
+            ,
+            None => None,
+        };
         let mut txs: Vec<AddressData> = vec![];
         let mut addresses_parsed = 0;
         // 1.
@@ -172,7 +177,15 @@ impl UnchainedFile {
             let app_passed = address_entry.offset as usize * AP_ENTRY;
             self.body.appearances.current = self.body.appearances.start + app_passed;
             let address = address_entry.address.clone();
-            if address.starts_with(address_starting_bytes.as_ref()) {
+
+            let good_address = match &address_starting_bytes {
+                Some(leading_byte) => {
+                    address.starts_with(leading_byte)
+                },
+                None => true,
+            };
+
+            if good_address  {
                 // 4. to 7.
                 let potential_appearances: Option<Vec<TransactionId>> =
                     self.parse_appearances(&address_entry)?;
@@ -199,7 +212,7 @@ impl UnchainedFile {
         self.parsed = txs;
 
         debug!(
-            "In {:?}. {:0>7} addresses started with 0x{} and had tx in range ({}-{}). Chunk attributes: nAddr {:0>7}, nApp {:0>7}.",
+            "In {:?}. {:0>7} addresses started with 0x{:?} and had tx in range ({}-{}). Chunk attributes: nAddr {:0>7}, nApp {:0>7}.",
             self.path.file_name().unwrap(), self.parsed.len(), address_leading_char,
             self.desired.old, self.desired.new,
             self.header.n_addresses, self.header.n_appearances
