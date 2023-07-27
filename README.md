@@ -2,10 +2,10 @@
 Tool for reading UnchainedIndex files
 
 - [crates/utils](./crates/utils) library for reading unchained index files
-- [crates/utils](./crates/utils) app for exporting appearances from the UnchainedIndex as test
+- [bin/finder](./bin/finder) app for exporting appearances from the UnchainedIndex as test
 files in a different format (e.g., eth_getAddressesInBlock)
 
-The Unchained
+
 
 
 ## Obtaining the UnchainedIndex
@@ -36,3 +36,12 @@ with .bin suffix. This mimics how trueblocks-core handles the files.
 
 QmVu.... -> 017190314-017193246.bin
 
+## Test vector generation
+
+Use the ./bin/finder application to generate test cases for a single block as follows:
+```command
+$ cargo run -p appearance-finder -- --name ./data/17190873/017190314-017193246.bin --low 17190873 --high 17190873  >> data/17190873/eth_get_addresses_in_block.json
+```
+
+A test vector using this output can be seen in [./data/17190873/get-addresses-in-block.io](./data/17190873/get-addresses-in-block.io),
+which matches the format in [https://github.com/ethereum/execution-apis/tree/main/tests](https://github.com/ethereum/execution-apis/tree/main/tests).
