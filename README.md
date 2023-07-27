@@ -45,3 +45,13 @@ $ cargo run -p appearance-finder -- --name ./data/17190873/017190314-017193246.b
 
 A test vector using this output can be seen in [./data/17190873/get-addresses-in-block.io](./data/17190873/get-addresses-in-block.io),
 which matches the format in [https://github.com/ethereum/execution-apis/tree/main/tests](https://github.com/ethereum/execution-apis/tree/main/tests).
+
+Example truncated test vector:
+```console
+>> {"jsonrpc":"2.0","id":1,"method":"eth_getAddressesInBlock","params":["17190873"]}
+<< {"id":1,"jsonrpc":"2.0","result":[{"address":"00000000000000adc04c56bf30ac9d3c0aaf14dc","appearances":[188,198]},{"address":"000000000000012f9f5834e18ae9de5bb945fcbc","appearances":[187]},{"address":"0000000000000130ad696f883928513d6c60e898","appearances":[187]},{"address":"000000000000017fe957866391fcbff1e7cd8771","appearances":[119]},{"address":"000000000000018078abcfe65140564ba897c5c7","appearances":[119]},{"address":"000000000000027fd9e732802372528dd0182613","appearances":[178]},{"address":"000000000000028099f6a81fd29448d84671c902","appearances":[178]},{"address":"00000000000004209cb07257da66821be694bb8d","appearances":[174]},
+...
+{"address":"fc720f8d776e87e9dfb0f59732de8b259875fa32","appearances":[0,1,2,3,4,14,15,17,18,19,20,21,22,23,24,25,26,28,37,87,123,130,131,132,133,134,135,136,137,138,139,140,142,143,145,146,147,148,149,150,151,152,153,154,155,156]},{"address":"fd50b5a6a7c13d92aeafe33bc6337fe5355d6c0d","appearances":[80]},{"address":"fe6d1cd1076aa6c0a68125ec2c89ab42114c953c","appearances":[88]},{"address":"fe8058b2cf7c5f4542acdab09879500baf2ef020","appearances":[38]},{"address":"fffd8963efd1fc6a506488495d951d5263988d25","appearances":[6,7,8,62,74,79,80,120,162]},{"address":"ffffffffffffffffffffffffffffffffffffffff","appearances":[6,8,12,71,126,128,129,165,168,169,175,183,194]}]}
+```
+This allows another implementation of `eth_getAddressesInBlock` to compare their response
+to the implementation in trueblocks-core, which was used to generate the data in this test file.
