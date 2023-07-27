@@ -1,0 +1,14 @@
+[package]
+name = "unchained-reader"
+version = "0.1.0"
+edition = "2021"
+description = "For reading Unchained Index files"
+
+
+[workspace]
+members = [
+    "crates/*",
+    "bin/appearance-finder"
+]
+
+[dependencies]
