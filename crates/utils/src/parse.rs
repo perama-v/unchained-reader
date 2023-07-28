@@ -161,9 +161,7 @@ impl UnchainedFile {
     /// 9. Jump back to address table, go to 2.
     pub fn with_parsed(&mut self, address_leading_char: Option<&str>) -> Result<(), ParseError> {
         let address_starting_bytes = match address_leading_char {
-            Some(leading) =>
-                Some(hex::decode(leading)?)
-            ,
+            Some(leading) => Some(hex::decode(leading)?),
             None => None,
         };
         let mut txs: Vec<AddressData> = vec![];
@@ -179,13 +177,11 @@ impl UnchainedFile {
             let address = address_entry.address.clone();
 
             let good_address = match &address_starting_bytes {
-                Some(leading_byte) => {
-                    address.starts_with(leading_byte)
-                },
+                Some(leading_byte) => address.starts_with(leading_byte),
                 None => true,
             };
 
-            if good_address  {
+            if good_address {
                 // 4. to 7.
                 let potential_appearances: Option<Vec<TransactionId>> =
                     self.parse_appearances(&address_entry)?;

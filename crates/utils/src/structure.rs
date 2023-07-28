@@ -2,8 +2,8 @@
 //! the Unchained Index specification.
 
 use byteorder::{LittleEndian, ReadBytesExt};
-use serde::{Serialize, Deserialize, Serializer};
-use std::{io::Read, path::PathBuf, fmt::Display};
+use serde::{Deserialize, Serialize};
+use std::{io::Read, path::PathBuf};
 
 use super::constants::{ADDR, MAGIC, VAL, VER};
 
