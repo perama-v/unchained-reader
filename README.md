@@ -5,10 +5,14 @@ Tool for reading UnchainedIndex files
 - [bin/finder](./bin/finder) app for exporting transactionIndices from the UnchainedIndex as test
 files in a different format (e.g., eth_getAddressesInBlock)
 
+The app has a CLI interface:
+```command
+cargo run -p appearance-finder -- --help
+```
 
+## address_getAddressesInBlock
 
-
-## Obtaining the UnchainedIndex
+### Obtaining the UnchainedIndex
 
 Either use the sample in `./data/17190873/QmV...` Quick way to get a piece of the index:
 
@@ -36,11 +40,15 @@ with .bin suffix. This mimics how trueblocks-core handles the files.
 
 QmVu.... -> 017190314-017193246.bin
 
-## Test vector generation
+### Test vector generation
 
 Use the ./bin/finder application to generate test cases for a single block as follows:
 ```command
-$ cargo run -p appearance-finder -- --name ./data/17190873/017190314-017193246.bin --low 17190873 --high 17190873  >> data/17190873/eth_get_addresses_in_block.json
+$ cargo run -p appearance-finder get-addresses-in-block --help
+```
+E.g.,
+```command
+$ cargo run -p appearance-finder get-addresses-in-block --block 17190873 --chunk-file data/17190873/017190314-017193246.bin
 ```
 
 A test vector using this output can be seen in [./data/17190873/get-addresses-in-block.io](./data/17190873/get-addresses-in-block.io),
@@ -55,3 +63,42 @@ Example truncated test vector:
 ```
 This allows another implementation of `eth_getAddressesInBlock` to compare their response
 to the implementation in trueblocks-core, which was used to generate the data in this test file.
+
+## address_getAppearances
+
+Data for a randomly selected address that has an interesting transaction in block 17190873
+is present. Test cases can be generated for that address
+using the data in data in [./data/17190873/address_0x30a4639850b3ddeaaca4f06280aa751682f11382.json](./data/17190873/address_0x30a4639850b3ddeaaca4f06280aa751682f11382.json)
+
+If test vectors for other data are needed proceed below, otherwise skip to the
+generate test vectors section.
+### Test vectors for arbitrary data
+
+Test cases are generated using trueblocks-core.
+
+Install trueblocks then for `some_address` run:
+```
+chifra list 0x30a4639850b3ddeaaca4f06280aa751682f11382 --fmt json | jq
+```
+That file can then be ingested by `appearance-finder` app as shown below.
+
+### Generate test cases
+
+Test cases for the `address_getAppearances` method can be generated as follows:
+
+Use the ./bin/finder application to generate test cases for a single block as follows:
+```command
+$ cargo run -p appearance-finder get-appearances --help
+```
+E.g., all blocks
+```command
+$ cargo run -p appearance-finder get-appearances --address 0x30a4639850b3ddeaaca4f06280aa751682f11382 --range all --file ./data/17190873/address_0x30a46.json
+```
+E.g., one block
+```command
+$ cargo run -p appearance-finder get-appearances --address 0x30a4639850b3ddeaaca4f06280aa751682f11382 --range single --start-block 17190873 --file ./data/17190873/address_0x30a46.json
+```
+E.g., range of blocks
+```command
+$ cargo run -p appearance-finder get-appearances --address 0x30a4639850b3ddeaaca4f06280aa751682f11382 --range custom --start-block 17190873 --end-block 17190889 --file ./data/17190873/address_0x30a46.json
+```
