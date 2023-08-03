@@ -8,26 +8,39 @@ use unchained_utils::structure::AddressData;
 pub struct AddressesInBlockResponse {
     pub id: u32,
     pub jsonrpc: String,
-    pub result: Vec<BlockAppearance>,
+    pub result: BlockAddresses,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BlockAddresses {
+    pub block_number: String,
+    pub addresses: Vec<BlockAppearance>,
 }
 
 impl AddressesInBlockResponse {
-    pub fn create(data: Vec<AddressData>) -> Self {
+    pub fn create(data: Vec<AddressData>, block_number: u32) -> Self {
+        let addresses = data
+            .into_iter()
+            .map(|x| {
+                let address = format!("0x{}", hex::encode(x.address));
+                let indices = x
+                    .appearances
+                    .into_iter()
+                    .map(|y| format!("{:#x}", y.index))
+                    .collect();
+
+                BlockAppearance { address, indices }
+            })
+            .collect();
+
         AddressesInBlockResponse {
             id: 1,
             jsonrpc: "2.0".to_string(),
-            result: data
-                .into_iter()
-                .map(|x| {
-                    let address = hex::encode(x.address);
-                    let transaction_indices = x.appearances.into_iter().map(|y| y.index).collect();
-
-                    BlockAppearance {
-                        address,
-                        transaction_indices,
-                    }
-                })
-                .collect(),
+            result: BlockAddresses {
+                block_number: format!("{:#x}", block_number),
+                addresses,
+            },
         }
     }
 }
@@ -39,5 +52,5 @@ pub struct BlockAppearance {
     /// The address that appeared in a transaction.
     pub address: String,
     /// The transaction index where the address appeared.
-    pub transaction_indices: Vec<u32>,
+    pub indices: Vec<String>,
 }

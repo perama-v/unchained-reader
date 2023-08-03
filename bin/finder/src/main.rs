@@ -49,7 +49,7 @@ fn generate_addresses_in_block(args: AppArgs) {
     let mut file = UnchainedFile::from_file(chunk_file, range).expect("Couldn't read file");
     file.with_parsed(None)
         .expect("Could not add appearance data");
-    let response = AddressesInBlockResponse::create(file.parsed);
+    let response = AddressesInBlockResponse::create(file.parsed, block);
     println!(
         "{}",
         serde_json::to_string(&response).expect("Could not create JSON response")
