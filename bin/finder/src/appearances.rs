@@ -55,8 +55,8 @@ impl AppearancesResponse {
                 },
             })
             .map(|x| RelevantTransaction {
-                block_number: x.block_number,
-                transaction_index: x.transaction_index,
+                block_number: format!("{:#x}", x.block_number),
+                transaction_index: format!("{:#x}", x.transaction_index),
             })
             .collect();
 
@@ -72,9 +72,9 @@ impl AppearancesResponse {
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct RelevantTransaction {
-    pub block_number: u32,
+    pub block_number: String,
     /// The index of the transaction index in which the address appeared.
-    pub transaction_index: u32,
+    pub transaction_index: String,
 }
 
 /// Data containing information useful for test vector generation.
