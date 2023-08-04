@@ -3,13 +3,6 @@
 use serde::{Deserialize, Serialize};
 use unchained_utils::structure::AddressData;
 
-/// 0xffff...ffff
-///
-/// Additional check to exclude this value from potential valid addresses.
-/// Note: not explicitly excluded in UnchainedIndex, hence manual exclusion here.
-const MAX_ADDRESS: &[u8] = &[255; 20];
-
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AddressesInBlockResponse {
@@ -29,9 +22,6 @@ impl AddressesInBlockResponse {
     pub fn create(data: Vec<AddressData>, block_number: u32) -> Self {
         let addresses = data
             .into_iter()
-            .filter(|x|{
-                x.address != MAX_ADDRESS
-            })
             .map(|x| {
                 let address = format!("0x{}", hex::encode(x.address));
                 let indices = x
