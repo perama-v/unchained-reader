@@ -44,7 +44,7 @@ impl AddressesInBlockResponse {
         if block_number > THE_MERGE {
             // UnchainedIndex did not store withdrawals
             // We can provide them manually until the index is integrated
-            // See also: <>
+            // See also: <https://github.com/TrueBlocks/trueblocks-core/issues/3122>
             if block_number == 17190873 {
                 // Used as a test case.
                 let withdrawal = BlockAppearance {
