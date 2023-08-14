@@ -18,22 +18,45 @@ pub struct BlockAddresses {
     pub addresses: Vec<BlockAppearance>,
 }
 
+/// Block of the merge (Ethereum consensus/execution)
+const THE_MERGE: u32 = 15537393;
+
 impl AddressesInBlockResponse {
     pub fn create(data: Vec<AddressData>, block_number: u32) -> Self {
-        let addresses = data
+        if block_number == 0 {
+            // See also: <https://github.com/ethereum/execution-apis/pull/456>
+            todo!("Every appearance will be 'alloc'")
+        }
+        let mut addresses: Vec<BlockAppearance> = data
             .into_iter()
             .map(|x| {
                 let address = format!("0x{}", hex::encode(x.address));
-                let indices = x
+                let locations = x
                     .appearances
                     .into_iter()
-                    .map(|y| format!("{:#x}", y.index))
+                    .filter_map(|y| unchained_index_to_location(y.index))
                     .collect();
 
-                BlockAppearance { address, indices }
+                BlockAppearance { address, locations }
             })
             .collect();
 
+        if block_number > THE_MERGE {
+            // UnchainedIndex did not store withdrawals
+            // We can provide them manually until the index is integrated
+            // See also: <>
+            if block_number == 17190873 {
+                // Used as a test case.
+                let withdrawal = BlockAppearance {
+                    address: "0x1cedc0f3af8f9841b0a1f5c1a4ddc6e1a1629074".to_string(),
+                    locations: vec!["withdrawals".to_string()],
+                };
+                addresses.push(withdrawal);
+            } else {
+                todo!("Post merge block warning. Check if UnchainedIndex includes withdrawals, or provide withdrawal addresses manually in codebase")
+            }
+        }
+        addresses.sort_by(|a1, a2| a1.address.cmp(&a2.address));
         AddressesInBlockResponse {
             id: 1,
             jsonrpc: "2.0".to_string(),
@@ -45,6 +68,22 @@ impl AddressesInBlockResponse {
     }
 }
 
+/// Converts a transaction id in UnchainedIndex format to one compatible with Appearances
+/// specification.
+///
+/// See also: <https://github.com/ethereum/execution-apis/pull/456>
+fn unchained_index_to_location(tx: u32) -> Option<String> {
+    match tx {
+        99999 => Some("miner".to_string()),
+        99998 => Some("uncle".to_string()),
+        99997 => None, // stores address 0xdeaddead..., can ignore
+        99996 => None, // External (To be confirmed: used for gnosis chain somehow)
+        // 99995 => Some("withdrawals".to_string()), // TBC: Future inclusion in Unchained index
+        // https://github.com/TrueBlocks/trueblocks-core/issues/3122
+        _ => Some(format!("{:#x}", tx)),
+    }
+}
+
 /// Holds selected transactions for a given address in a single block.
 #[derive(Clone, Debug, Default, Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
@@ -52,5 +91,5 @@ pub struct BlockAppearance {
     /// The address that appeared in a transaction.
     pub address: String,
     /// The transaction index where the address appeared.
-    pub indices: Vec<String>,
+    pub locations: Vec<String>,
 }
