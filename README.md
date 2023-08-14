@@ -102,3 +102,12 @@ E.g., range of blocks
 ```command
 $ cargo run -p appearance-finder get-appearances --address 0x30a4639850b3ddeaaca4f06280aa751682f11382 --range custom --start-block 17190873 --end-block 17190889 --file ./data/17190873/address_0x30a46.json
 ```
+Single block, for an address that appears as a miner and as transactions (intra- and extra- tx apperances)
+```
+# Source:
+chifra list 0xd2090025857b9c7b24387741f120538e928a3a59 --fmt json -F 17190873 -L 17190889 | jq
+```
+Test case:
+```command
+$ cargo run -p appearance-finder get-appearances --address 0xd2090025857b9c7b24387741f120538e928a3a59 --range single --start-block 17190873 --end-block 17190889 --file ./data/17190873/address_0xd2090.json
+```

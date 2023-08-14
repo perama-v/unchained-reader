@@ -5,7 +5,7 @@ use std::{fs::File, path::PathBuf};
 use anyhow::bail;
 use serde::{Deserialize, Serialize};
 
-use crate::cli::RangeParam;
+use crate::{cli::RangeParam, utils::unchained_index_to_location};
 
 /// Response to address_getAppearances
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -54,9 +54,12 @@ impl AppearancesResponse {
                     _ => false,
                 },
             })
-            .map(|x| RelevantTransaction {
-                block_number: format!("{:#x}", x.block_number),
-                transaction_index: format!("{:#x}", x.transaction_index),
+            .filter_map(|x| match unchained_index_to_location(x.transaction_index) {
+                Some(location) => Some(RelevantTransaction {
+                    block_number: format!("{:#x}", x.block_number),
+                    location,
+                }),
+                None => None,
             })
             .collect();
 
@@ -74,7 +77,7 @@ impl AppearancesResponse {
 pub struct RelevantTransaction {
     pub block_number: String,
     /// The index of the transaction index in which the address appeared.
-    pub transaction_index: String,
+    pub location: String,
 }
 
 /// Data containing information useful for test vector generation.

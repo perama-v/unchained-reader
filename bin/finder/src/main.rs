@@ -1,6 +1,7 @@
 mod appearances;
 mod block;
 pub mod cli;
+mod utils;
 
 use appearances::{AppearanceSource, AppearancesResponse};
 use block::AddressesInBlockResponse;
@@ -15,7 +16,7 @@ fn main() {
         AddressEndpoint::GetAppearances { .. } => generate_appearances(args),
     }
 }
-/// For address_getAddressesInBlock
+/// For address_getAppearances
 fn generate_appearances(args: AppArgs) {
     let (address, range, start_block, end_block, file) = match args.endpoint {
         AddressEndpoint::GetAppearances {
